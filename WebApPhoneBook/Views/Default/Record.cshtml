@@ -1,0 +1,71 @@
+﻿@model PhoneBook.PhoneBook
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Запись</title>
+    <link href="~/css/Style.css" rel="stylesheet" />
+</head>
+<body>
+
+<header class="header">
+    <a href="/">НАЗАД</a>
+</header>
+
+<main class="main">
+    <section class="book section-offset">
+        <div class="container book__container">
+            <h1 class="book__title">Записная книжка</h1>
+            <div class="book__content">
+                <div class="book__content-left">
+
+                </div>
+                <div class="book__content-right">
+                    @{
+                        if (Model != null)
+                        {
+                            <table style="width: 30%" border="1">
+                                <tr>
+                                    <td>ID: </td>
+                                    <td>@Model.Id</td>
+                                </tr>
+                                <tr>
+                                    <td>Фамилия: </td>
+                                    <td>@Model.LastName</td>
+                                </tr>
+                                <tr>
+                                    <td>Имя: </td>
+                                    <td>@Model.FirstName</td>
+                                </tr>
+                                <tr>
+                                    <td>Отчество: </td>
+                                    <td>@Model.MiddleName</td>
+                                </tr>
+                                <tr>
+                                    <td>Номер телефона: </td>
+                                    <td>@Model.NumberPhone</td>
+                                </tr>
+                                <tr>
+                                    <td>Адрес: </td>
+                                    <td>@Model.Address</td>
+                                </tr>
+                                <tr>
+                                    <td>Описание: </td>
+                                    <td>@Model.Desc</td>
+                                </tr>
+                            </table>
+                        }
+                        else
+                        {
+                            <text>Записи не существует</text>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="footer"></footer>
+
+</body>
+</html>
