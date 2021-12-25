@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using Microsoft.AspNetCore.Http;
 
 namespace WebApPhoneBook
 {
@@ -25,7 +23,7 @@ namespace WebApPhoneBook
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Default}/{action=Index}");
+                    pattern: "{controller=PhoneBook}/{action=AllView}");
 
             });
         }

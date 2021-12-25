@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/css/Style.css" rel="stylesheet" />
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <header class="header">
+        <menu>
+            <a href="/">Главная</a> | 
+            <a href="/PhoneBook/Util">Добавить запись</a>
+        </menu>
+    </header>
+
+    <main class="main">
+        <section class="book section-offset">
+            <div class="container book__container">
+                <h1 class="book__title">@ViewBag.Title</h1>
+                <div class="book__content">
+                    @RenderBody()
+                </div>
+            </div>
+        </section>
+    </main>
+
+<footer class="footer">
+    <p>&copy; @DateTime.Now.Year</p>
+</footer>
+    <!--
+    <script src="~/js/just-validate.min.js" type="text/javascript"></script>
+    <script src="~/js/inputmask.min.js" type="text/javascript"></script>
+    <script src="~/js/bottom.js" type="text/javascript"></script>
+    -->
+</body>
+</html>
