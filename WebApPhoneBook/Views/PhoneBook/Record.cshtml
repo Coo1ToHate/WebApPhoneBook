@@ -1,9 +1,9 @@
 ﻿@model WebApPhoneBook.Entitys.PhoneBook
 @{
-    Layout = "_Layout";
+    ViewBag.Title = $"Телефонная книжка - Запись №{Model.Id}";
 }
 
-<table style="width: 30%" border="1">
+<table class="book__table">
     <tr>
         <td>ID: </td>
         <td>@Model.Id</td>

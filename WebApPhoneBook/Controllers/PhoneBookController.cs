@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebApPhoneBook.ContextFolder;
 using WebApPhoneBook.Entitys;
 
@@ -6,23 +10,28 @@ namespace WebApPhoneBook.Controllers
 {
     public class PhoneBookController : Controller
     {
-        public IActionResult AllView()
+
+        private readonly DataContext _context;
+
+        public PhoneBookController(DataContext context)
         {
-            ViewBag.PhoneBook = new DataContext().PhoneBooks;
-            ViewBag.Title = "Телефонная книжка";
+            _context = context;
+        }
+
+        public IActionResult Index()
+        {
+            ViewBag.PhoneBook = _context.PhoneBooks;
             return View();
         }
 
-        public IActionResult Record(int? id)
+        public async Task<IActionResult> Record(int? id)
         {
             if (id == null)
             {
                 return Redirect("~/");
             }
 
-            ViewBag.Title = $"Телефонная книжка - Запись №{id}";
-
-            PhoneBook record = new DataContext().PhoneBooks.Find(id);
+            PhoneBook record = await _context.PhoneBooks.FindAsync(id);
             if (record == null)
             {
                 return Redirect("~/");
@@ -32,63 +41,62 @@ namespace WebApPhoneBook.Controllers
         }
 
         [HttpGet]
-        public IActionResult Util(int? id)
+        [Authorize]
+        public IActionResult Add(int? id)
         {
-            if (id == null)
-            {
-                ViewBag.Title = "Добавить запись";
-                return View();
-            }
+            return View();
+        }
 
-            PhoneBook record = new DataContext().PhoneBooks.Find(id);
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> AddRecord(string recordLastName, string recordFirstName, string recordMiddleName, string recordNumberPhone, string recordAddress, string recordDesc)
+        {
+            _context.Add(new PhoneBook()
+            {
+                LastName = recordLastName,
+                FirstName = recordFirstName,
+                MiddleName = recordMiddleName,
+                NumberPhone = recordNumberPhone,
+                Address = recordAddress,
+                Desc = recordDesc
+            });
+            await _context.SaveChangesAsync();
+            return Redirect("~/");
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        public IActionResult Edit(int? id)
+        {
+            PhoneBook record = _context.PhoneBooks.Find(id);
             if (record == null)
             {
                 return Redirect("~/");
             }
 
-            ViewBag.Title = $"Телефонная книжка - Редактор записи №{id}";
-
             return View(record);
         }
 
-        [HttpPost]
-        public IActionResult AddRecord(string recordLastName, string recordFirstName, string recordMiddleName, string recordNumberPhone, string recordAddress, string recordDesc)
-        {
-            using (var db = new DataContext())
-            {
-                db.PhoneBooks.Add(
-                    new PhoneBook()
-                    {
-                        LastName = recordLastName,
-                        FirstName = recordFirstName,
-                        MiddleName = recordMiddleName,
-                        NumberPhone = recordNumberPhone,
-                        Address = recordAddress,
-                        Desc = recordDesc
-                    });
-                db.SaveChanges();
-            }
-            return Redirect("~/");
-        }
 
         [HttpPost]
-        public IActionResult EditRecord(string recordLastName, string recordFirstName, string recordMiddleName, string recordNumberPhone, string recordAddress, string recordDesc, string recordId)
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> EditRecord(string recordLastName, string recordFirstName, string recordMiddleName, string recordNumberPhone, string recordAddress, string recordDesc, string recordId)
         {
-            using (var db = new DataContext())
-            {
-                var tmp = db.PhoneBooks.Find(int.Parse(recordId));
-                tmp.LastName = recordLastName;
-                tmp.FirstName = recordFirstName;
-                tmp.MiddleName = recordMiddleName;
-                tmp.NumberPhone = recordNumberPhone;
-                tmp.Address = recordAddress;
-                tmp.Desc = recordDesc;
-                db.SaveChanges();
-            }
+            var tmp = _context.PhoneBooks.FirstOrDefault(r => r.Id == int.Parse(recordId));
+            tmp.LastName = recordLastName;
+            tmp.FirstName = recordFirstName;
+            tmp.MiddleName = recordMiddleName;
+            tmp.NumberPhone = recordNumberPhone;
+            tmp.Address = recordAddress;
+            tmp.Desc = recordDesc;
+            _context.Update(tmp);
+            await _context.SaveChangesAsync();
 
             return Redirect($"/PhoneBook/record?id={recordId}");
         }
 
+        [Authorize(Roles = "admin")]
         public IActionResult Del(int? id)
         {
             if (id == null)
@@ -96,26 +104,23 @@ namespace WebApPhoneBook.Controllers
                 return Redirect("~/");
             }
 
-            PhoneBook record = new DataContext().PhoneBooks.Find(id);
+            PhoneBook record = _context.PhoneBooks.Find(id);
             if (record == null)
             {
                 return Redirect("~/");
             }
 
-            ViewBag.Title = "Удаление записи";
-
             return View(record);
         }
 
         [HttpPost]
-        public IActionResult Del(int id)
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> Del(int id)
         {
-            using (var db = new DataContext())
-            {
-                var tmp = db.PhoneBooks.Find(id);
-                db.PhoneBooks.Remove(tmp);
-                db.SaveChanges();
-            }
+            PhoneBook recorDel = new PhoneBook() { Id = id };
+            _context.Entry(recorDel).State = EntityState.Deleted;
+            await _context.SaveChangesAsync();
+
             return Redirect("~/");
         }
     }

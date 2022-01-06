@@ -1,0 +1,21 @@
+﻿@using WebApPhoneBook.Entitys
+@{
+    ViewBag.Title = "Телефонная книжка";
+}
+
+<ul class="book__list list-reset">
+    @foreach (PhoneBook r in ViewBag.PhoneBook)
+    {
+        <li class="book__list-items">
+            <a class="book__list-link" href="PhoneBook/record?id=@r.Id">
+                @r.Id - @r.LastName @r.FirstName @r.MiddleName
+            </a>
+            @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+            {
+                <span class="book__list-actions">
+                    [ <a asp-action="Edit" asp-controller="PhoneBook" asp-route-id="@r.Id">Редактировать</a> | <a asp-action="Del" asp-controller="PhoneBook" asp-route-id="@r.Id">Удалить</a> ]
+                </span>
+            }
+        </li>
+    }
+</ul>

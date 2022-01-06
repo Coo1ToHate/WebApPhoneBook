@@ -1,15 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using WebApPhoneBook.Entitys;
 
 namespace WebApPhoneBook.ContextFolder
 {
-    public class DataContext : DbContext
+    public class DataContext : IdentityDbContext<User>
     {
-        public DbSet<PhoneBook> PhoneBooks { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=MSSQLLocalPhoneBook;Trusted_Connection=True;");
+            Database.EnsureCreated();
         }
+
+        public DbSet<PhoneBook> PhoneBooks { get; set; }
     }
 }

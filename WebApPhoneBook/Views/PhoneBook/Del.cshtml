@@ -1,9 +1,9 @@
 ﻿@model WebApPhoneBook.Entitys.PhoneBook
 @{
-    Layout = "_Layout";
+    ViewBag.Title = $"Удаление записи - {Model.LastName} {Model.FirstName}";
 }
 
-<table style="width: 30%" border="1">
+<table class="book__table">
     <tr>
         <td>ID: </td>
         <td>@Model.Id</td>
@@ -35,7 +35,7 @@
 </table>
 
 <div class="form">
-    <form action="~/PhoneBook/Del" method="post">
+    <form asp-action="Del" asp-controller="PhoneBook" method="post">
         <input name="Id" value="@Model.Id" type="hidden" />
         <p><input type="submit" value="УДАЛИТЬ!" /></p>
     </form>

@@ -1,0 +1,17 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model WebApPhoneBook.ViewModels.ChangeRoleViewModel
+@{
+    ViewBag.Title = $"Изменение ролей для пользователя {Model.LoginProp}";
+}
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" name="userId" value="@Model.Id" />
+    <div class="form-group">
+        @foreach (IdentityRole role in Model.AllRoles)
+        {
+            <input type="checkbox" name="roles" value="@role.Name"
+                   @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "") />@role.Name <br />
+            }
+    </div>
+    <button type="submit">Сохранить</button>
+</form>
